@@ -45,7 +45,7 @@ const ACVisualization: React.FC<ACVisualizationProps> = ({ darkMode = false, tem
           className={`absolute top-12 left-4 w-16 h-8 ${darkMode ? 'bg-gray-900' : 'bg-gray-200'} rounded flex items-center justify-center`}
         >
           <span className={`text-xs font-mono ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-            {temperature !== null ? `${temperature}°C` : '--°C'}
+            {temperature !== null ? `${Math.round(temperature)}°C` : '--°C'}
           </span>
         </div>
         

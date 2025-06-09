@@ -53,7 +53,7 @@ const TemperatureCard: React.FC<TemperatureCardProps> = ({
             PREDICTED IDEAL
           </p>
           <div className="flex items-end">
-            <span className="text-4xl font-bold mr-1">{temperature}</span>
+            <span className="text-4xl font-bold mr-1">{Math.round(temperature)}</span>
             <span className={`text-2xl ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>°C</span>
           </div>
         </div>
