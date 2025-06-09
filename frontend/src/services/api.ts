@@ -23,7 +23,7 @@ export interface PredictionErrorResponse {
   timestamp?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smart-ac-backend.onrender.com/';
 
 export async function getIdealTemperaturePrediction(
   data: PredictionInput
