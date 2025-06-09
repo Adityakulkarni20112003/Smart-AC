@@ -11,6 +11,23 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Global variable for the model pipeline
+model_pipeline = None
+
+# Load the model when the application module is initialized
+# This ensures Gunicorn loads the model when starting workers.
+def initialize_model():
+    """Wrapper function to load model and log status."""
+    if not load_model():
+        logger.critical("CRITICAL: Model could not be loaded during app initialization. Predictions will likely fail. Check previous logs from load_model() for details.")
+        # For a production system, you might consider if the app should forcefully exit if the model is absolutely essential for all operations.
+        # For example, by raising an exception here that Gunicorn might handle by not starting workers, or by calling sys.exit(1) if appropriate.
+    else:
+        logger.info("Model loading process completed at application startup (called from initialize_model).")
+
+# Call model initialization here so it runs when the module is imported
+initialize_model()
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes and origins
 
@@ -264,11 +281,14 @@ def internal_error(error):
     """Handle 500 errors."""
     return jsonify({'error': 'Internal server error'}), 500
 
+
 if __name__ == '__main__':
-    # Load the model when the app starts
-    if not load_model():
-        print("WARNING: Could not load model. Please train the model first by running the training script.")
-        print("The API will start but predictions will fail until the model is loaded.")
+    # The app.run() call is for direct execution (e.g., python flask_api.py)
+    # Gunicorn does not use this block for serving the application.
+    # Model loading is now handled at the module level.
+    # If you had app.run() here, keep it for local testing.
+    # Example: app.run(debug=True, host='0.0.0.0', port=5000)
+    pass # Placeholder if nothing else is in this block
     
     # Run the Flask app
     print("Starting Flask API server...")
