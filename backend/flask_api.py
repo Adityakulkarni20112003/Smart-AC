@@ -14,6 +14,42 @@ logger = logging.getLogger(__name__)
 # Global variable for the model pipeline
 model_pipeline = None
 
+def load_model():
+    """Load the trained model pipeline."""
+    global model_pipeline
+    try:
+        # Construct absolute path to the model file
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        model_filename = os.path.join(base_dir, 'ideal_temperature_model.joblib')
+        
+        logger.info(f"Attempting to load model from: {model_filename}")
+
+        if not os.path.exists(model_filename):
+            logger.error(f"Model file NOT FOUND at: {model_filename}")
+            # Log current working directory and contents for debugging
+            logger.error(f"Current working directory: {os.getcwd()}")
+            try:
+                logger.error(f"Files in script's directory ({base_dir}): {os.listdir(base_dir)}")
+            except Exception as list_e:
+                logger.error(f"Could not list files in script's directory: {list_e}")
+            raise FileNotFoundError(f"Model file '{model_filename}' not found. Please ensure it is in the same directory as flask_api.py and deployed correctly.")
+        
+        model_pipeline = joblib.load(model_filename)
+        logger.info(f"Model loaded successfully from {model_filename}")
+        return True
+    except Exception as e:
+        logger.error(f"Error loading model from {model_filename}: {str(e)}")
+        # Log current working directory and contents for debugging if error occurs after path check
+        logger.error(f"Current working directory during error: {os.getcwd()}")
+        base_dir_on_error = os.path.dirname(os.path.abspath(__file__))
+        model_filename_on_error = os.path.join(base_dir_on_error, 'ideal_temperature_model.joblib')
+        logger.error(f"Checked path during error: {model_filename_on_error}")
+        try:
+            logger.error(f"Files in script's directory during error ({base_dir_on_error}): {os.listdir(base_dir_on_error)}")
+        except Exception as list_e:
+            logger.error(f"Could not list files in script's directory during error: {list_e}")
+        return False
+
 # Load the model when the application module is initialized
 # This ensures Gunicorn loads the model when starting workers.
 def initialize_model():
@@ -30,9 +66,6 @@ initialize_model()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes and origins
-
-# Global variables to store model and feature info
-model_pipeline = None
 expected_features = [
     'Indoor_Temperature', 'Outdoor_Temperature', 'Humidity', 'Occupancy',
     'Weather_Condition', 'Time_of_Day', 'Sunlight_Intensity', 'Room_Size', 'Window_State'
