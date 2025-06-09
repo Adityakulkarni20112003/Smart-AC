@@ -1,0 +1,21 @@
+# Python backend
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+
+# Node frontend (assuming frontend/.gitignore handles node_modules, dist, etc.)
+# If frontend/.gitignore is missing or incomplete, add:
+# frontend/node_modules/
+# frontend/dist/
+# frontend/.env*
+# frontend/.DS_Store
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE specific
+.vscode/
+.idea/
